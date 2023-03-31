@@ -11,4 +11,17 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class Item {
+
+    private String id;
+
+    private String category;
+
+    private String description;
+
+    private String name;
+
+    private Integer price;
+    private Integer stock;
+
+
 }
