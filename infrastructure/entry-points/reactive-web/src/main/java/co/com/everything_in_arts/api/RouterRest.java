@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -62,7 +63,7 @@ public class RouterRest {
                     }))
     public RouterFunction<ServerResponse> getItemById(ItemGetByIdUseCase itemGetByIdUseCase){
         return route(GET("items/{id}"),
-                request -> itemGetByIdUseCase.apply(request.pathVariable("id"))
+                request -> itemGetByIdUseCase.apply( request.pathVariable("id"))
                         .flatMap(item -> ServerResponse.ok()
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(item))
@@ -120,7 +121,7 @@ public class RouterRest {
             MediaType.APPLICATION_JSON_VALUE},
             beanClass = ItemDeleteUseCase.class, method = RequestMethod.DELETE,
             beanMethod = "apply",
-            operation = @Operation(operationId = "deleteFlowerById", tags = "Flowers usecases",
+            operation = @Operation(operationId = "deleteFlowerById", tags = "Items usecases",
                     responses = {
                             @ApiResponse(responseCode = "200", description = "Success",
                                     content = @Content (schema = @Schema(implementation = Item.class))),

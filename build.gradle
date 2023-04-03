@@ -15,6 +15,12 @@ plugins {
 	id 'jacoco'
 }
 
+cleanPlugin {
+    modelProps {
+        whitelistedDependencies = "spring-boot-starter-web, springfox-swagger"
+    }
+}
+
 sonarqube {
     def modules = subprojects.projectDir.collect { "${it.toString().replace(project.projectDir.toString() + "/", "")}" }
     properties {
