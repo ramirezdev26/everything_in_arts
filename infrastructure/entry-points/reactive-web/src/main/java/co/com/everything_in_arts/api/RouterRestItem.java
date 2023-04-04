@@ -1,12 +1,14 @@
 package co.com.everything_in_arts.api;
 
 import co.com.everything_in_arts.model.item.Item;
-import co.com.everything_in_arts.usecase.itemdelete.ItemDeleteUseCase;
-import co.com.everything_in_arts.usecase.itemgetall.ItemGetAllUseCase;
-import co.com.everything_in_arts.usecase.itemgetbyid.ItemGetByIdUseCase;
-import co.com.everything_in_arts.usecase.itemsave.ItemSaveUseCase;
-import co.com.everything_in_arts.usecase.itemupdate.ItemUpdateUseCase;
+import co.com.everything_in_arts.usecase.item.itemdelete.ItemDeleteUseCase;
+import co.com.everything_in_arts.usecase.item.itemgetall.ItemGetAllUseCase;
+import co.com.everything_in_arts.usecase.item.itemgetbyid.ItemGetByIdUseCase;
+import co.com.everything_in_arts.usecase.item.itemsave.ItemSaveUseCase;
+import co.com.everything_in_arts.usecase.item.itemupdate.ItemUpdateUseCase;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -16,25 +18,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Mono;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RequestPredicates.DELETE;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
-public class RouterRest {
+public class RouterRestItem {
     @Bean
     @RouterOperation(path = "/items", produces = {
             MediaType.APPLICATION_JSON_VALUE},
             beanClass = ItemGetAllUseCase.class, method = RequestMethod.GET,
             beanMethod = "get",
-            operation = @Operation(operationId = "getAllItems", tags = "Item usecases",
+            operation = @Operation(operationId = "getAllItems", tags = "Items usecases",
                     responses = {
                             @ApiResponse(responseCode = "200", description = "Success",
                                     content = @Content(schema = @Schema(implementation = Item.class))),
@@ -56,6 +56,9 @@ public class RouterRest {
             method = RequestMethod.GET,
             beanMethod = "apply",
             operation = @Operation(operationId = "getItemById", tags = "Items usecases",
+                    parameters = {
+                    @Parameter(name = "id", description = "Item ID", required = true, in = ParameterIn.PATH)
+                    },
                     responses = {
                             @ApiResponse(responseCode = "200", description = "Success",
                                     content = @Content (schema = @Schema(implementation = Item.class))),
@@ -77,6 +80,9 @@ public class RouterRest {
             beanClass = ItemSaveUseCase.class, method = RequestMethod.POST,
             beanMethod = "apply",
             operation = @Operation(operationId = "saveItem", tags = "Items usecases",
+                    parameters = {
+                            @Parameter(name = "item", in = ParameterIn.PATH, schema = @Schema(implementation = Item.class))
+                    },
                     responses = {
                             @ApiResponse(responseCode = "201", description = "Success", content = @Content(schema = @Schema(implementation = Item.class))),
                             @ApiResponse(responseCode = "406", description = "Not acceptable. Try again")},
@@ -98,6 +104,10 @@ public class RouterRest {
             MediaType.APPLICATION_JSON_VALUE},
             beanClass = ItemUpdateUseCase.class, method = RequestMethod.PUT, beanMethod = "apply",
             operation = @Operation(operationId = "updateItem", tags = "Items usecases",
+                    parameters = {
+                            @Parameter(name = "id", description = "Item ID", required = true, in = ParameterIn.PATH),
+                            @Parameter(name = "item", in = ParameterIn.PATH, schema = @Schema(implementation = Item.class))
+                    },
                     responses = {
                             @ApiResponse(responseCode = "202", description = "Accepted", content = @Content(schema = @Schema(implementation = Item.class))),
                             @ApiResponse(responseCode = "406", description = "Not acceptable. Try again")},
@@ -121,7 +131,10 @@ public class RouterRest {
             MediaType.APPLICATION_JSON_VALUE},
             beanClass = ItemDeleteUseCase.class, method = RequestMethod.DELETE,
             beanMethod = "apply",
-            operation = @Operation(operationId = "deleteFlowerById", tags = "Items usecases",
+            operation = @Operation(operationId = "deleteItemById", tags = "Items usecases",
+                    parameters = {
+                            @Parameter(name = "id", description = "Item ID", required = true, in = ParameterIn.PATH)
+                    },
                     responses = {
                             @ApiResponse(responseCode = "200", description = "Success",
                                     content = @Content (schema = @Schema(implementation = Item.class))),
@@ -137,4 +150,10 @@ public class RouterRest {
                         .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(throwable.getMessage()))
         );
     }
+
+
+
+
+
+
 }
