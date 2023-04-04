@@ -12,10 +12,10 @@ import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
-public class MongoRepositoryAdapter implements ItemRepository {
+public class MongoRepositoryAdapterItem implements ItemRepository {
 
 
-    private final MongoDBRepository repository;
+    private final MongoDBRepositoryItem repository;
 
     private final ObjectMapper mapper;
 
@@ -32,7 +32,7 @@ public class MongoRepositoryAdapter implements ItemRepository {
         return this.repository
                 .findById(id)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("item with id: " + id + "was not found")))
-                .map(flowerData -> mapper.map(flowerData, Item.class));
+                .map(itemData -> mapper.map(itemData, Item.class));
     }
 
     @Override
@@ -40,7 +40,7 @@ public class MongoRepositoryAdapter implements ItemRepository {
         return this.repository
                 .save(mapper.map(item, ItemData.class))
                 .switchIfEmpty(Mono.empty())
-                .map(flowerData -> mapper.map(flowerData, Item.class));
+                .map(itemData -> mapper.map(itemData, Item.class));
     }
 
     @Override
@@ -56,10 +56,10 @@ public class MongoRepositoryAdapter implements ItemRepository {
     }
 
     @Override
-    public Mono<Void> deleteItem(String id) {
+    public Mono<String> deleteItem(String id) {
         return this.repository
                 .findById(id)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("item with id: " + id + " was not found")))
-                .flatMap(itemData -> this.repository.deleteById(itemData.getId()));
+                .flatMap(itemData -> this.repository.delete(itemData)).thenReturn(id);
     }
 }
