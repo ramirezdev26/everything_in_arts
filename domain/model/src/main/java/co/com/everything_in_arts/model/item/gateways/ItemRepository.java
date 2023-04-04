@@ -10,6 +10,6 @@ public interface ItemRepository {
     Mono<Item> getItemById(String id);
     Mono<Item> saveItem(Item item);
     Mono<Item> updateItem(String id, Item item);
-    Mono<Void> deleteItem(String id);
+    Mono<String> deleteItem(String id);
 
 }

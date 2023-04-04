@@ -11,6 +11,6 @@ public interface InvoiceRepository {
     Mono<Invoice> getInvoiceById(String id);
     Mono<Invoice> saveInvoice(Invoice invoice);
     Mono<Invoice> updateInvoice(String id, Invoice invoice);
-    Mono<Void> deleteInvoice(String id);
+    Mono<String> deleteInvoice(String id);
 
 }
