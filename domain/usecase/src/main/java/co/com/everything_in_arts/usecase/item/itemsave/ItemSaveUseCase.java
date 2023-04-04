@@ -1,22 +1,19 @@
-package co.com.everything_in_arts.usecase.itemdelete;
+package co.com.everything_in_arts.usecase.item.itemsave;
 
 import co.com.everything_in_arts.model.item.Item;
 import co.com.everything_in_arts.model.item.gateways.ItemRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
 
 @RequiredArgsConstructor
-public class ItemDeleteUseCase implements Function<String, Mono<Void>> {
+public class ItemSaveUseCase implements Function<Item, Mono<Item>> {
 
     private final ItemRepository repository;
 
-
     @Override
-    public Mono<Void> apply(String s) {
-        return repository.deleteItem(s);
+    public Mono<Item> apply(Item item) {
+        return repository.saveItem(item);
     }
 }

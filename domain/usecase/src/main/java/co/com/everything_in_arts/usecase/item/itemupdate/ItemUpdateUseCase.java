@@ -1,19 +1,19 @@
-package co.com.everything_in_arts.usecase.itemsave;
+package co.com.everything_in_arts.usecase.item.itemupdate;
 
 import co.com.everything_in_arts.model.item.Item;
 import co.com.everything_in_arts.model.item.gateways.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 @RequiredArgsConstructor
-public class ItemSaveUseCase implements Function<Item, Mono<Item>> {
+public class ItemUpdateUseCase implements BiFunction<String, Item, Mono<Item>> {
 
     private final ItemRepository repository;
 
     @Override
-    public Mono<Item> apply(Item item) {
-        return repository.saveItem(item);
+    public Mono<Item> apply(String id, Item item) {
+        return repository.updateItem(id, item);
     }
 }

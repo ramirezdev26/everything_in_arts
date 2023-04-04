@@ -1,9 +1,7 @@
-package co.com.everything_in_arts.usecase.invoicegetall;
+package co.com.everything_in_arts.usecase.invoice.invoicegetall;
 
 import co.com.everything_in_arts.model.invoice.Invoice;
 import co.com.everything_in_arts.model.invoice.gateways.InvoiceRepository;
-import co.com.everything_in_arts.model.item.Item;
-import co.com.everything_in_arts.model.item.gateways.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 

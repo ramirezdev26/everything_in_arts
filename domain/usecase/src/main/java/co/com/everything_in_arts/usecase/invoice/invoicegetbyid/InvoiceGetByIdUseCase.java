@@ -1,4 +1,4 @@
-package co.com.everything_in_arts.usecase.invoicegetbyid;
+package co.com.everything_in_arts.usecase.invoice.invoicegetbyid;
 
 import co.com.everything_in_arts.model.invoice.Invoice;
 import co.com.everything_in_arts.model.invoice.gateways.InvoiceRepository;

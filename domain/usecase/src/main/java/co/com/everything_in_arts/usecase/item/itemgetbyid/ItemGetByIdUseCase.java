@@ -1,4 +1,4 @@
-package co.com.everything_in_arts.usecase.itemgetbyid;
+package co.com.everything_in_arts.usecase.item.itemgetbyid;
 
 import co.com.everything_in_arts.model.item.Item;
 import co.com.everything_in_arts.model.item.gateways.ItemRepository;
