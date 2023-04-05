@@ -43,6 +43,9 @@ subprojects {
 
 }
 
+
+
+
 jacoco {
     toolVersion = "${jacocoVersion}"
     reportsDirectory = file("$buildDir/reports")
