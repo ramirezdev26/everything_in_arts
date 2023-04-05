@@ -5,3 +5,17 @@ services:
     build: .
     ports:
       - "8080:8080"
+    depends_on:
+      - mongodb
+    environment:
+      SPRING_DATA_MONGODB_DATABASE: everything_in_arts
+      SPRING_DATA_MONGODB_URI: mongodb+srv://admin_station:holamundo@cluster0.bm4ar.mongodb.net/everything_in_arts?retryWrites=true&w=majority
+    links:
+      - mongodb
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+
