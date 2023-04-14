@@ -1,7 +1,11 @@
 package co.com.everything_in_arts.api;
 
+import co.com.everything_in_arts.model.category.Category;
 import co.com.everything_in_arts.model.item.Item;
+import co.com.everything_in_arts.usecase.category.categorygetall.CategoryGetAllUseCase;
+import co.com.everything_in_arts.usecase.item.itemdecreasestock.ItemDecreaseStockUseCase;
 import co.com.everything_in_arts.usecase.item.itemdelete.ItemDeleteUseCase;
+import co.com.everything_in_arts.usecase.item.itemgetByCategory.ItemGetByCategoryUseCase;
 import co.com.everything_in_arts.usecase.item.itemgetall.ItemGetAllUseCase;
 import co.com.everything_in_arts.usecase.item.itemgetbyid.ItemGetByIdUseCase;
 import co.com.everything_in_arts.usecase.item.itemsave.ItemSaveUseCase;
@@ -49,6 +53,27 @@ public class RouterRestItem {
         );
     }
 
+
+    @Bean
+    @RouterOperation(path = "/items/categories", produces = {
+            MediaType.APPLICATION_JSON_VALUE},
+            beanClass = CategoryGetAllUseCase.class, method = RequestMethod.GET,
+            beanMethod = "get",
+            operation = @Operation(operationId = "getAllCategories", tags = "Category usecases",
+                    responses = {
+                            @ApiResponse(responseCode = "200", description = "Success",
+                                    content = @Content(schema = @Schema(implementation = Category.class))),
+                            @ApiResponse(responseCode = "204", description = "Nothing to show")
+                    }))
+    public RouterFunction<ServerResponse> getAllCategories (CategoryGetAllUseCase categoryGetAllUseCase){
+        return route(GET("/items/categories"),
+                request -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(BodyInserters.fromPublisher(categoryGetAllUseCase.get(), Category.class))
+                        .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(throwable.getMessage()))
+        );
+    }
+
     @Bean
     @RouterOperation(path = "/items/{id}", produces = {
             MediaType.APPLICATION_JSON_VALUE},
@@ -70,6 +95,26 @@ public class RouterRestItem {
                         .flatMap(item -> ServerResponse.ok()
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(item))
+                        .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(throwable.getMessage()))
+        );
+    }
+
+    @Bean
+    @RouterOperation(path = "/items/category/{category}", produces = {
+            MediaType.APPLICATION_JSON_VALUE},
+            beanClass = ItemGetByCategoryUseCase.class, method = RequestMethod.GET,
+            beanMethod = "apply",
+            operation = @Operation(operationId = "getItemsByCategory", tags = "Items usecases",
+                    responses = {
+                            @ApiResponse(responseCode = "200", description = "Success",
+                                    content = @Content(schema = @Schema(implementation = Item.class))),
+                            @ApiResponse(responseCode = "204", description = "Nothing to show")
+                    }))
+    public RouterFunction<ServerResponse> getItemsByCategory (ItemGetByCategoryUseCase itemGetByCategoryUseCase) {
+        return route(GET("/items/category/{category}"),
+                request -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(BodyInserters.fromPublisher(itemGetByCategoryUseCase.apply(request.pathVariable("category")), Item.class))
                         .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(throwable.getMessage()))
         );
     }
@@ -145,7 +190,32 @@ public class RouterRestItem {
                 request -> itemDeleteUseCase.apply(request.pathVariable("id"))
                         .thenReturn(ServerResponse.ok()
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue("Item deleted"))
+                                .bodyValue(""))
+                        .flatMap(serverResponseMono -> serverResponseMono)
+                        .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(throwable.getMessage()))
+        );
+    }
+
+    @Bean
+    @RouterOperation(path = "/items/stock/{id}", produces = {
+            MediaType.APPLICATION_JSON_VALUE},
+            beanClass = ItemDecreaseStockUseCase.class, method = RequestMethod.DELETE,
+            beanMethod = "apply",
+            operation = @Operation(operationId = "reduceStockById", tags = "Items usecases",
+                    parameters = {
+                            @Parameter(name = "id", description = "Item ID", required = true, in = ParameterIn.PATH)
+                    },
+                    responses = {
+                            @ApiResponse(responseCode = "200", description = "Success",
+                                    content = @Content (schema = @Schema(implementation = Item.class))),
+                            @ApiResponse(responseCode = "404", description = "Item Not Found")
+                    }))
+    public RouterFunction<ServerResponse> reduceStockItem (ItemDecreaseStockUseCase itemDecreaseStockUseCase){
+        return route(PATCH("/items/stock/{id}").and(accept(MediaType.APPLICATION_JSON)),
+                request -> itemDecreaseStockUseCase.apply(request.pathVariable("id"))
+                        .thenReturn(ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(""))
                         .flatMap(serverResponseMono -> serverResponseMono)
                         .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(throwable.getMessage()))
         );

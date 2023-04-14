@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Set;
+
 @Repository
 @RequiredArgsConstructor
 public class MongoRepositoryAdapterItem implements ItemRepository {
@@ -18,6 +20,7 @@ public class MongoRepositoryAdapterItem implements ItemRepository {
     private final MongoDBRepositoryItem repository;
 
     private final ObjectMapper mapper;
+
 
     @Override
     public Flux<Item> getAllItems() {
@@ -32,6 +35,13 @@ public class MongoRepositoryAdapterItem implements ItemRepository {
         return this.repository
                 .findById(id)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("item with id: " + id + "was not found")))
+                .map(itemData -> mapper.map(itemData, Item.class));
+    }
+
+    @Override
+    public Flux<Item> getItemsByCategory(String category) {
+        return this.repository.findByCategory(category)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("items with category: " + category + "was not found")))
                 .map(itemData -> mapper.map(itemData, Item.class));
     }
 
@@ -62,4 +72,17 @@ public class MongoRepositoryAdapterItem implements ItemRepository {
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("item with id: " + id + " was not found")))
                 .flatMap(itemData -> this.repository.delete(itemData)).thenReturn(id);
     }
+
+    @Override
+    public Mono<String> decreaseStock(String id) {
+        return this.repository
+                .findById(id)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("item with id: " + id + " was not found")))
+                .flatMap(itemData -> {
+                    itemData.reduceStock();
+                    return repository.save(itemData);
+                }).thenReturn(id);
+    }
+
+
 }

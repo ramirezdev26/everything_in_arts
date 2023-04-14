@@ -4,17 +4,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.repository.query.ReactiveQueryByExampleExecutor;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
-import java.lang.reflect.ParameterizedType;
+import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 
 import static org.springframework.data.domain.Example.of;
 
@@ -44,15 +38,23 @@ public class ItemData {
     @NotNull(message = "stock  can't be null")
     private Integer stock;
 
+    @NotNull(message = "images  can't be null")
+    private Set<String> images;
 
 
-    public ItemData(String category, String description, String name, Integer price, Integer stock) {
+
+    public ItemData(String category, String description, String name, Integer price, Integer stock, Set<String> images) {
         this.id = UUID.randomUUID().toString().substring(0, 10);
         this.category = category;
         this.description = description;
         this.name = name;
         this.price = price;
         this.stock = stock;
+        this.images = images;
+    }
+
+    public void reduceStock(){
+        this.stock -= 1;
     }
 
 }
