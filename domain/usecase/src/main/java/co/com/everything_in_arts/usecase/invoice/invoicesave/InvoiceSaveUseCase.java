@@ -14,8 +14,11 @@ public class InvoiceSaveUseCase implements Function<Invoice, Mono<Invoice>> {
 
     private final InvoiceRepository repository;
 
+
     @Override
     public Mono<Invoice> apply(Invoice invoice) {
         return repository.saveInvoice(invoice);
     }
+
+
 }
