@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.Set;
 
 @Getter
@@ -17,9 +18,10 @@ public class Invoice {
 
     private String id;
     private Set<Item> itemList;
-    private String date;
-    private String userName;
+    private Date date;
+    private String name;
     private String email;
     private Integer total;
+    private String address;
 
 }
