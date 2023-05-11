@@ -16,6 +16,16 @@ plugins {
 	id 'org.sonarqube' version "${sonarVersion}"
 	id 'jacoco'
 }
+tasks.jar {
+    enabled = false
+}
+jar {
+    manifest {
+        attributes(
+                "Main-Class": "co.com.everything_in_arts.MainApplication"
+        )
+    }
+}
 
 
 
